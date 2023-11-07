@@ -1,0 +1,111 @@
+@startuml
+
+package Evaluation {
+  interface IEvaluator {
+    +Evaluate(node: INode): double
+  }
+
+  class Calculator {
+    -calculator: IEvaluator
+    +CalculateInfix(expression: string): double
+    +CalculatePrefix(expression: string): double
+    +CalculatePostfix(expression: string): double
+  }
+
+  class NotationEvaluator implements IEvaluator {
+    +Evaluate(node: INode): double
+  }
+}
+
+package Node {
+  interface INode {
+    +Value: string
+    +Evaluate(): double
+  }
+
+  class OperandNode {
+    -Value: string
+    +Evaluate(): double
+  }
+
+  class OperatorNode {
+    -OperatorStrategy: Operator.IOperator
+    +Left: INode
+    +Right: INode
+    +Value: string
+    +Evaluate(): double
+  }
+}
+
+package Operator {
+  interface IOperator {
+    +Value: string
+    +PerformOperation(left: double, right: double): double
+  }
+
+  class AdditionOperator {
+    +Value: string
+    +PerformOperation(left: double, right: double): double
+  }
+
+  class SubtractionOperator {
+    +Value: string
+    +PerformOperation(left: double, right: double): double
+  }
+
+  class MultiplicationOperator {
+    +Value: string
+    +PerformOperation(left: double, right: double): double
+  }
+
+  class DivisionOperator {
+    +Value: string
+    +PerformOperation(left: double, right: double): double
+  }
+}
+
+package NotationParser {
+  interface IParserStrategy {
+    +Parse(expression: string): INode
+  }
+
+  class InfixNotationParser {
+    +Parse(expression: string): INode
+  }
+
+  class PostfixNotationParser {
+    +Parse(expression: string): INode
+  }
+
+  class PrefixNotationParser {
+    +Parse(expression: string): INode
+  }
+
+  class Parser {
+    -strategy: IParserStrategy
+    +Parse(expression: string): INode
+  }
+
+  enum NotationType {
+    Infix
+    Prefix
+    Postfix
+  }
+}
+
+INode <|.. OperandNode
+INode <|.. OperatorNode
+IOperator <|.. AdditionOperator
+IOperator <|.. SubtractionOperator
+IOperator <|.. MultiplicationOperator
+IOperator <|.. DivisionOperator
+IEvaluator <|.. Evaluation.NotationEvaluator
+IParserStrategy <|.. InfixNotationParser
+IParserStrategy <|.. PostfixNotationParser
+IParserStrategy <|.. PrefixNotationParser
+OperatorNode *-- IOperator
+Parser *-- IParserStrategy
+Calculator *-- IEvaluator
+IEvaluator ..> INode : uses
+
+@enduml
