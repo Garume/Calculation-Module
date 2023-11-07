@@ -10,7 +10,7 @@ public static class CalculateUtility
         new List<(string op, bool leftAssoc)> { ("+", true), ("-", true) }
     };
 
-    public static bool IsOperator(string value)
+    public static bool IsOperator(string? value)
     {
         return value is "+" or "-" or "*" or "/";
     }

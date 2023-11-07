@@ -2,7 +2,8 @@
 
 public sealed class AdditionOperator : IOperator
 {
-    public string Value => "+";
+    private static string OperatorValue => "+";
+    public string Value => OperatorValue;
 
     public double PerformOperation(double left, double right)
     {
