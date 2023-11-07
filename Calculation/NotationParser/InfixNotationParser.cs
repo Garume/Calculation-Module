@@ -1,47 +1,22 @@
-﻿namespace Calculation;
+﻿using Calculation.Node;
 
-public class StringNotation : INotation
+namespace Calculation.NotationParser;
+
+public class InfixNotationParser : IParserStrategy
 {
-    private StringNotation(string stringNumber, NotationType notationType)
+    public INode Parse(string expression)
     {
-        StringNumber = stringNumber;
-        Notation = notationType;
+        var postfixExpression = Convert2Postfix(expression);
+        var postfixNotationParser = new PostfixNotationParser();
+        return postfixNotationParser.Parse(postfixExpression);
     }
 
-    public string StringNumber { get; }
-
-
-    public NotationType Notation { get; }
-
-    public static StringNotation CreateInfixNotation(string stringNumber)
-    {
-        return new StringNotation(stringNumber, NotationType.Infix);
-    }
-
-    public static StringNotation CreatePolishNotation(string stringNumber)
-    {
-        return new StringNotation(stringNumber, NotationType.Polish);
-    }
-
-    public static StringNotation CreateReversePolishNotation(string stringNumber)
-    {
-        return new StringNotation(stringNumber, NotationType.ReversePolish);
-    }
-
-    public StringNotation ConvertToReversePolishNotation()
-    {
-        if (Notation != NotationType.Infix)
-            return this;
-        var stringNumber = AnalyzeInFixNotation();
-        return CreateInfixNotation(stringNumber);
-    }
-
-    private string AnalyzeInFixNotation()
+    public string Convert2Postfix(string expression)
     {
         var queue = new Queue<string>();
         var stack = new Stack<string>();
 
-        foreach (var t in StringNumber.Split(' '))
+        foreach (var t in expression.Split(' '))
             if (t == ",")
             {
                 if (!stack.Contains("("))
@@ -49,7 +24,7 @@ public class StringNotation : INotation
 
                 while (stack.First() != "(") queue.Enqueue(stack.Pop());
             }
-            else if (CalculateUtility.IsPriorityOperator(t) == true)
+            else if (CalculateUtility.IsPriorityOperator(t))
             {
                 while (stack.Count > 0)
                 {
@@ -81,7 +56,7 @@ public class StringNotation : INotation
                         stack.Push(t);
                         break;
                     case ")" when !stack.Contains("("):
-                        throw new Exception();
+                        throw new InvalidOperationException("Unmatched closing parenthesis detected.");
                     case ")":
                     {
                         while (true)

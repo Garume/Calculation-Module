@@ -15,7 +15,7 @@ public static class CalculateUtility
         return value is "+" or "-" or "*" or "/";
     }
 
-    public static bool? IsPriorityOperator(string t)
+    public static bool IsPriorityOperator(string t)
     {
         return PriorityOperatorsDictionary().ContainsKey(t);
     }

@@ -1,4 +1,5 @@
-using Calculation;
+using Calculation.Node;
+using Calculation.NotationParser;
 
 namespace CalculationTest;
 
@@ -8,14 +9,13 @@ public class ParsePolishTest
     public void ParsePolishNotationTest1()
     {
         const string polishExpression = "+ 1 2";
-        var stringNumber = StringNotation.CreatePolishNotation(polishExpression);
-        var nodeParser = new NodeParser(stringNumber);
-        var node = nodeParser.Parse();
+        var parser = new Parser(new PrefixNotationParser());
+        var node = parser.Parse(polishExpression) as OperatorNode;
         Assert.Multiple(() =>
         {
-            Assert.That(node.Value, Is.EqualTo("+"));
-            Assert.That(node.Left.Value, Is.EqualTo("1"));
-            Assert.That(node.Right.Value, Is.EqualTo("2"));
+            Assert.That(node?.Value, Is.EqualTo("+"));
+            Assert.That(node?.Left.Value, Is.EqualTo("1"));
+            Assert.That(node?.Right.Value, Is.EqualTo("2"));
         });
     }
 
@@ -23,18 +23,17 @@ public class ParsePolishTest
     public void ParsePolishNotationTest2()
     {
         const string polishExpression = "+ * 1 2 / 3 4";
-        var stringNumber = StringNotation.CreatePolishNotation(polishExpression);
-        var nodeParser = new NodeParser(stringNumber);
-        var node = nodeParser.Parse();
+        var parser = new Parser(new PrefixNotationParser());
+        var node = parser.Parse(polishExpression) as OperatorNode;
         Assert.Multiple(() =>
         {
-            Assert.That(node.Value, Is.EqualTo("+"));
-            Assert.That(node.Left.Value, Is.EqualTo("*"));
-            Assert.That(node.Right.Value, Is.EqualTo("/"));
-            Assert.That(node.Left.Left.Value, Is.EqualTo("1"));
-            Assert.That(node.Left.Right.Value, Is.EqualTo("2"));
-            Assert.That(node.Right.Left.Value, Is.EqualTo("3"));
-            Assert.That(node.Right.Right.Value, Is.EqualTo("4"));
+            Assert.That(node?.Value, Is.EqualTo("+"));
+            Assert.That(node?.Left.Value, Is.EqualTo("*"));
+            Assert.That(node?.Right.Value, Is.EqualTo("/"));
+            Assert.That(node?.Left.Left.Value, Is.EqualTo("1"));
+            Assert.That(node?.Left.Right.Value, Is.EqualTo("2"));
+            Assert.That(node?.Right.Left.Value, Is.EqualTo("3"));
+            Assert.That(node?.Right.Right.Value, Is.EqualTo("4"));
         });
     }
 }

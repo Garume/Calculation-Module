@@ -4,80 +4,79 @@ namespace CalculationTest;
 
 public class CalculatorTest
 {
+    private Calculator _calculator;
+
+    [SetUp]
+    public void Setup()
+    {
+        _calculator = new Calculator();
+    }
+
     [TestCase("1 + 2", 3.0)]
     [TestCase("1 - 2", -1.0)]
     [TestCase("2 + 5 * 3 - 4", 13)]
     [TestCase("1.0 + 2 / .3 / ( 0 - 1 )", -5.666666666666667)]
-    public void CalculateInfixNotationTest(string stringNumber, double expected)
+    public void CalculateInfixNotationTest(string expression, double expected)
     {
-        var infixNotationNumber = StringNotation.CreateInfixNotation(stringNumber);
-        var result = Calculator.Calculate(infixNotationNumber);
+        var result = _calculator.CalculateInfix(expression);
         Assert.That(result, Is.EqualTo(expected));
     }
 
 
     [TestCase("1 / 0")]
-    public void DivideByZeroTest(string stringNumber)
+    public void DivideByZeroTest(string expression)
     {
-        var infixNotationNumber = StringNotation.CreateInfixNotation(stringNumber);
-        Assert.Throws<DivideByZeroException>(() => Calculator.Calculate(infixNotationNumber));
+        Assert.Throws<DivideByZeroException>(() => _calculator.CalculateInfix(expression));
     }
 
     [TestCase("1e308 * 1e10")]
-    public void OverflowTest(string stringNumber)
+    public void OverflowTest(string expression)
     {
-        var infixNotationNumber = StringNotation.CreateInfixNotation(stringNumber);
-        Assert.Throws<OverflowException>(() => Calculator.Calculate(infixNotationNumber));
+        Assert.Throws<OverflowException>(() => _calculator.CalculateInfix(expression));
     }
 
 
     [TestCase("+ 3")]
     [TestCase("3 +")]
-    public void IncompleteExpressionTest(string stringNumber)
+    public void IncompleteExpressionTest(string expression)
     {
-        var infixNotationNumber = StringNotation.CreateInfixNotation(stringNumber);
-        Assert.Throws<InvalidOperationException>(() => Calculator.Calculate(infixNotationNumber));
+        Assert.Throws<InvalidOperationException>(() => _calculator.CalculateInfix(expression));
     }
 
     [TestCase("( 3 + 4")]
-    public void MismatchedParenthesesTest(string stringNumber)
+    public void MismatchedParenthesesTest(string expression)
     {
-        var infixNotationNumber = StringNotation.CreateInfixNotation(stringNumber);
-        Assert.Throws<FormatException>(() => Calculator.Calculate(infixNotationNumber));
+        Assert.Throws<FormatException>(() => _calculator.CalculateInfix(expression));
     }
 
 
     [TestCase("3 + 4 )")]
-    public void MismatchedParenthesesTest2(string stringNumber)
+    public void MismatchedParenthesesTest2(string expression)
     {
-        var infixNotationNumber = StringNotation.CreateInfixNotation(stringNumber);
-        Assert.Throws<InvalidOperationException>(() => Calculator.Calculate(infixNotationNumber));
+        Assert.Throws<InvalidOperationException>(() => _calculator.CalculateInfix(expression));
     }
 
 
     [TestCase("3 + + 4")]
-    public void ConsecutiveOperatorsTest(string stringNumber)
+    public void ConsecutiveOperatorsTest(string expression)
     {
-        var infixNotationNumber = StringNotation.CreateInfixNotation(stringNumber);
-        Assert.Throws<InvalidOperationException>(() => Calculator.Calculate(infixNotationNumber));
+        Assert.Throws<InvalidOperationException>(() => _calculator.CalculateInfix(expression));
     }
 
 
     [TestCase("3.4.5")]
-    public void MisusedDecimalPointTest(string stringNumber)
+    public void MisusedDecimalPointTest(string expression)
     {
-        var infixNotationNumber = StringNotation.CreateInfixNotation(stringNumber);
-        Assert.Throws<FormatException>(() => Calculator.Calculate(infixNotationNumber));
+        Assert.Throws<FormatException>(() => _calculator.CalculateInfix(expression));
     }
 
     [TestCase("+ 1 2", 3.0)]
     [TestCase("- 1 2", -1.0)]
     [TestCase("- + 2 * 5 3 4", 13)]
     [TestCase("+ 1.0 / / 2 .3 - 0 1", -5.666666666666667)]
-    public void CalculatePolishNotationTest(string stringNumber, double expected)
+    public void CalculatePolishNotationTest(string expression, double expected)
     {
-        var polishNotationNumber = StringNotation.CreatePolishNotation(stringNumber);
-        var result = Calculator.Calculate(polishNotationNumber);
+        var result = _calculator.CalculatePrefix(expression);
         Assert.That(result, Is.EqualTo(expected));
     }
 
@@ -85,10 +84,9 @@ public class CalculatorTest
     [TestCase("1 2 -", -1.0)]
     [TestCase("2 5 3 * + 4 -", 13)]
     [TestCase("1.0 2 .3 / 0 1 - / +", -5.666666666666667)]
-    public void CalculateReversePolishNotationTest(string stringNumber, double expected)
+    public void CalculateReversePolishNotationTest(string expression, double expected)
     {
-        var polishNotationNumber = StringNotation.CreateReversePolishNotation(stringNumber);
-        var result = Calculator.Calculate(polishNotationNumber);
+        var result = _calculator.CalculatePostfix(expression);
         Assert.That(result, Is.EqualTo(expected));
     }
 }

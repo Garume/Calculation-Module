@@ -1,0 +1,12 @@
+﻿namespace Calculation.Operator;
+
+public sealed class DivisionOperator : IOperator
+{
+    public string Value => "/";
+
+    public double PerformOperation(double left, double right)
+    {
+        if (right == 0) throw new DivideByZeroException("Cannot divide by zero.");
+        return left / right;
+    }
+}
